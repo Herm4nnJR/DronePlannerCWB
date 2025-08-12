@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.env
+.venv/
+env/
+venv/
+
+# VSCode
+.vscode/
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Node/npm
+node_modules/
+
+# Outros
+*.log
+*.sqlite3
+*.db
+
+# Arquivos temporários
+*.swp
+*.swo
+~$*
