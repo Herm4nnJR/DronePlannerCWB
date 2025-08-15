@@ -1,25 +1,21 @@
 from flask import Blueprint, jsonify, request
 from flask_cors import cross_origin
+from backend.DAO.hospitalDAO import HospitalDAO
+from backend.utils.jsonfyObjects import jsonify_list_of_objects
 
-hospital_bp = Blueprint('hospital', __name__)
+hospitalRoute = Blueprint('hospital', __name__)
+hospitalDAO = HospitalDAO()
 
-@hospital_bp.route('/api/hospitais', methods=['GET'])
+@hospitalRoute.route('/api/hospitais', methods=['GET'])
 @cross_origin()
+@jsonify_list_of_objects
 def get_hospitais():
-    hospitais = [
-        {"id": 1, "nome": "Hospital Central", "lat": -25.4284, "lng": -49.2733},
-        {"id": 2, "nome": "Hospital Regional", "lat": -25.4500, "lng": -49.2300}
-    ]
-    return jsonify(hospitais)
+    return hospitalDAO.get_all_hospitais()
 
-@hospital_bp.route('/api/hospitais-origem', methods=['GET'])
+@hospitalRoute.route('/api/hospitais-origem', methods=['GET'])
 @cross_origin()
+@jsonify_list_of_objects
 def get_hospitais_origem():
-    hospital_destino = request.args.get('hospitaldestino')
-    hospitais_origem = [
-        {"id": 1, "nome": "Hospital Central", "lat": -25.4284, "lng": -49.2733},
-        {"id": 2, "nome": "Hospital Regional", "lat": -25.4500, "lng": -49.2300}
-    ]
-    if hospital_destino:
-        hospitais_origem = [h for h in hospitais_origem if str(h["id"]) != hospital_destino]
-    return jsonify(hospitais_origem)
+    crm_hospital_destino = request.args.get('hospitaldestino')
+    carga = request.args.get('carga')
+    return hospitalDAO.get_hospitais_without_destino(crm_hospital_destino, carga)

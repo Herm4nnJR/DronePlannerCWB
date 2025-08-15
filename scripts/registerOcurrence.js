@@ -1,10 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('registerForm');
     const msg = document.getElementById('registerMsg');
-    const cargoSelect = document.getElementById('cargo');
-    const hospitalDestinoSelect = document.getElementById('hospitaldestino');
-    const hospitalOrigemSelect = document.getElementById('hospitalorigem');
-    const pilotoSelect = document.getElementById('piloto');
     const etapa2FieldsDiv = document.getElementById('etapa2Fields');
     const urlApi = 'http://localhost:5000/api';
 
@@ -33,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(cargos => {
             $('#cargo').empty().append('<option value="">Selecione</option>');
             cargos.forEach(opt => {
-                $('#cargo').append(new Option(opt.nome, opt.id));
+                $('#cargo').append(new Option(opt.descricao, opt.id));
             });
             $('#cargo').trigger('change');
         });
@@ -49,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
             hospitaisData = hospitais;
             $('#hospitaldestino').empty().append('<option value="">Selecione</option>');
             hospitais.forEach(opt => {
-                $('#hospitaldestino').append(new Option(opt.nome, opt.id));
+                $('#hospitaldestino').append(new Option(opt.nome, opt.crm));
             });
             $('#hospitaldestino').trigger('change');
         });
@@ -67,15 +63,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Carregar hospitais de origem com base no hospital de destino selecionado
     function fetchHospitaisOrigem() {
-        const hospitalDestinoId = $('#hospitaldestino').val();
-        fetch(`${urlApi}/hospitais-origem?hospitaldestino=${hospitalDestinoId}`)
+        const hospitalDestinoCrm = $('#hospitaldestino').val();
+        const cargaTransportadaId = $('#cargo').val();
+        $('#hospitalorigem').empty();
+        if (!hospitalDestinoCrm || !cargaTransportadaId) 
+            return;
+        fetch(`${urlApi}/hospitais-origem?hospitaldestino=${hospitalDestinoCrm}&carga=${cargaTransportadaId}`)
             .then(response => response.json())
             .then(hospitais => {
                 $('#hospitalorigem').empty().append('<option value="">Selecione</option>');
                 hospitais.forEach(opt => {
-                    $('#hospitalorigem').append(new Option(opt.nome, opt.id));
+                    $('#hospitalorigem').append(new Option(opt.nome, opt.crm));
                 });
-                $('#hospitalorigem').trigger('change');
             });
     }
     // Adiciona o Leaflet ao carregar a página
@@ -124,8 +123,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let routeLine = null;
 
     function updateMap() {
-        const destino = hospitaisData.find(h => h.id == $('#hospitaldestino').val());
-        const origem = hospitaisData.find(h => h.id == $('#hospitalorigem').val());
+        const destino = hospitaisData.find(h => h.crm == $('#hospitaldestino').val());
+        const origem = hospitaisData.find(h => h.crm == $('#hospitalorigem').val());
 
         // Remove marcadores e linha antigos, se existirem
         if (origemMarker) {

@@ -1,14 +1,13 @@
 from flask import Blueprint, jsonify
 from flask_cors import cross_origin
+from backend.DAO.cargaDAO import CargaDAO
+from backend.utils.jsonfyObjects import jsonify_list_of_objects
 
 cargos_bp = Blueprint('cargos', __name__)
+cargaDAO = CargaDAO()
 
 @cargos_bp.route('/api/cargos', methods=['GET'])
 @cross_origin()
+@jsonify_list_of_objects
 def get_cargos():
-    cargos = [
-        {"id": 1, "nome": "Medicamentos"},
-        {"id": 2, "nome": "Equipamentos"},
-        {"id": 3, "nome": "Sangue"}
-    ]
-    return jsonify(cargos)
+    return cargaDAO.get_all_cargas()
