@@ -11,7 +11,7 @@ def register():
     hospital_destino = data.get('hospitaldestino')
     hospital_origem = data.get('hospitalorigem')
     piloto = data.get('piloto')
-    # Aqui você pode adicionar lógica para salvar no banco de dados futuramente
+    # salvar no banco de dados futuramente
     if cargo and hospital_destino and hospital_origem and piloto:
         return jsonify({'success': True})
     return jsonify({'success': False, 'error': 'Dados incompletos'})

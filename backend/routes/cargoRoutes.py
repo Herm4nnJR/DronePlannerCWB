@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint
 from flask_cors import cross_origin
 from backend.DAO.cargaDAO import CargaDAO
 from backend.utils.jsonfyObjects import jsonify_list_of_objects
