@@ -23,20 +23,24 @@
         <div style="flex: 1; min-width: 280px; max-width: 400px;">
             <h1>Ocurrence Register</h1>
             <form id="registerForm">
+                <label for="hospitaldestino">Hospital Destino:</label><br>
+                <select id="hospitaldestino" name="hospitaldestino" required>
+                </select><br><br>
                 <label for="cargo">Carga Transportada:</label><br>
                 <select id="cargo" name="cargo" required>
                     <option value="">Selecione</option>
                 </select><br><br>
-                <label for="hospitaldestino">Hospital Destino:</label><br>
-                <select id="hospitaldestino" name="hospitaldestino" required>
+                <label for="piloto">Piloto:</label><br>
+                <select id="piloto" name="piloto" required>
+                    <option value="">Selecione</option>
+                </select><br><br>
+                <label for="drone">Drone:</label><br>
+                <select id="drone" name="drone" required>
+                    <option value="">Selecione</option>
                 </select><br><br>
                 <div id="etapa2Fields" style="display:none;">
                     <label for="hospitalorigem">Hospital de Origem:</label><br>
                     <select id="hospitalorigem" name="hospitalorigem" required>
-                        <option value="">Selecione</option>
-                    </select><br><br>
-                    <label for="piloto">Piloto:</label><br>
-                    <select id="piloto" name="piloto" required>
                         <option value="">Selecione</option>
                     </select><br><br>
                 </div>

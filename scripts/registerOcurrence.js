@@ -21,9 +21,12 @@ document.addEventListener('DOMContentLoaded', function() {
             placeholder: "Selecione o piloto",
             allowClear: true
         });
+        $('#drone').select2({
+            placeholder: "Selecione o drone",
+            allowClear: true
+        });
     });
 
-    // Carregar opções de cargos
     fetch(`${urlApi}/cargos`)
         .then(response => response.json())
         .then(cargos => {
@@ -35,10 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
     let hospitaisData = [];
-    const mapDiv = document.getElementById('map');
-    let map;
 
-    // Carregar opções de hospitais
     fetch(`${urlApi}/hospitais`)
         .then(response => response.json())
         .then(hospitais => {
@@ -50,7 +50,6 @@ document.addEventListener('DOMContentLoaded', function() {
             $('#hospitaldestino').trigger('change');
         });
 
-    // Carregar opções de pilotos
     fetch(`${urlApi}/pilots`)
         .then(response => response.json())
         .then(pilotos => {
@@ -61,7 +60,16 @@ document.addEventListener('DOMContentLoaded', function() {
             $('#piloto').trigger('change');
         });
 
-    // Carregar hospitais de origem com base no hospital de destino selecionado
+    fetch(`${urlApi}/drones`)
+        .then(response => response.json())
+        .then(drones => {
+            $('#drone').empty().append('<option value="">Selecione</option>');
+            drones.forEach(opt => {
+                $('#drone').append(new Option(opt.numeroSerie, opt.modelo.id)); //TO DO - corrigir nome e/ou id
+            });
+            $('#drone').trigger('change');
+        });
+
     function fetchHospitaisOrigem() {
         const hospitalDestinoCrm = $('#hospitaldestino').val();
         const cargaTransportadaId = $('#cargo').val();
@@ -77,7 +85,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             });
     }
-    // Adiciona o Leaflet ao carregar a página
+
+    let map;
     const leafletLink = document.createElement('link');
     leafletLink.rel = 'stylesheet';
     leafletLink.href = 'https://unpkg.com/leaflet/dist/leaflet.css';
@@ -86,7 +95,6 @@ document.addEventListener('DOMContentLoaded', function() {
     leafletScript.src = 'https://unpkg.com/leaflet/dist/leaflet.js';
     document.body.appendChild(leafletScript);
 
-    // Inicializa o mapa ao carregar a página
     leafletScript.onload = function() {
         map = L.map('map').setView([-25.4284, -49.2733], 12);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -97,21 +105,6 @@ document.addEventListener('DOMContentLoaded', function() {
     $('#hospitaldestino').on('change', function() {
         fetchHospitaisOrigem();
         updateMap();
-        // if (selected && window.L) {
-        //     if (!map) {
-        //         map = L.map('map').setView([selected.lat, selected.lng], 15);
-        //         marker = L.marker([selected.lat, selected.lng]).addTo(map);
-        //         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        //             attribution: '© OpenStreetMap contributors'
-        //         }).addTo(map);
-        //     } else {
-        //         map.setView([selected.lat, selected.lng], 15);
-        //         marker.setLatLng([selected.lat, selected.lng]);
-        //     }
-        // } else if (window.L && map) {
-        //     map.setView([-25.4284, -49.2733], 12); // Centraliza em um ponto padrão
-        //     marker.setLatLng([-25.4284, -49.2733]);
-        // }
     });
 
     $('#hospitalorigem').on('change', function() {
@@ -126,7 +119,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const destino = hospitaisData.find(h => h.crm == $('#hospitaldestino').val());
         const origem = hospitaisData.find(h => h.crm == $('#hospitalorigem').val());
 
-        // Remove marcadores e linha antigos, se existirem
         if (origemMarker) {
             map.removeLayer(origemMarker);
             origemMarker = null;
@@ -140,7 +132,6 @@ document.addEventListener('DOMContentLoaded', function() {
             routeLine = null;
         }
 
-        // Adiciona marcadores se as coordenadas estiverem disponíveis
         if (origem && origem.lat && origem.lng) {
             origemMarker = L.marker([origem.lat, origem.lng]).addTo(map)
                 .bindPopup('Hospital de Origem').openPopup();
@@ -150,13 +141,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 .bindPopup('Hospital Destino').openPopup();
         }
 
-        // Traça uma linha entre origem e destino se ambos existirem
         if (origem && destino && origem.lat && origem.lng && destino.lat && destino.lng) {
             routeLine = L.polyline([
                 [origem.lat, origem.lng],
                 [destino.lat, destino.lng]
             ], { color: 'blue', weight: 4 }).addTo(map);
-            // Ajusta o zoom do mapa para mostrar ambos os pontos
+
             map.fitBounds([
                 [origem.lat, origem.lng],
                 [destino.lat, destino.lng]
