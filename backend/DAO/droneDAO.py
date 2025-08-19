@@ -16,6 +16,6 @@ class DroneDAO:
         drones = []
         with get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute("SELECT numero_serie, ativo, id_modelo FROM tcc_hermann_drone_cadastrado")
-                drones = [Drone(numero_serie, modelos.get(id_modelo), ativo) for numero_serie, ativo, id_modelo in cur.fetchall()]
+                cur.execute("SELECT numero_serie, id_modelo, ativo, lat, lng FROM tcc_hermann_drone_cadastrado")
+                drones = [Drone(numero_serie, modelos.get(id_modelo), ativo, lat, lng) for numero_serie, id_modelo, ativo, lat, lng in cur.fetchall()]
         return drones

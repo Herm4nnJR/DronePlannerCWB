@@ -26,7 +26,7 @@ function initializeMap() {
 function updateMap(hospitaisData, dronesData) {
     const destino = hospitaisData.find(h => h.crm == $('#hospitaldestino').val());
     const origem = hospitaisData.find(h => h.crm == $('#hospitalorigem').val());
-    const drone = dronesData.find(d => d.numeroSerie == $('#drone').val());
+    const drone = dronesData.find(d => d.modelo.id == $('#drone').val());
     let boundsArray = [];
 
     if (origemMarker) {
