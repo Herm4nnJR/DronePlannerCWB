@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', function() {
         fetchHospitaisOrigem();
         checkShowEtapa2Fields();
         checkShowEtapa3Fields();
-        updateMap(hospitaisData, dronesData);
+        updateMap(urlApi, hospitaisData, dronesData);
     });
 
     $('#cargo').on('change', function() {
@@ -152,10 +152,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     $('#hospitalorigem').on('change', function() {
         checkShowEtapa3Fields();
-        updateMap(hospitaisData, dronesData);
+        updateMap(urlApi, hospitaisData, dronesData);
     });
 
     $('#drone').on('change', function() {
-        updateMap(hospitaisData, dronesData);
+        updateMap(urlApi, hospitaisData, dronesData);
     });
 });

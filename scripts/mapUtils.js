@@ -1,9 +1,5 @@
 let map;
-let origemMarker = null;
-let destinoMarker = null;
-let droneMarker = null;
-let route1Line = null;
-let route2Line = null;
+let dynamicLayers;
 
 function initializeMap() {
     const leafletLink = document.createElement('link');
@@ -20,66 +16,72 @@ function initializeMap() {
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
+        dynamicLayers = L.featureGroup().addTo(map);
     };
 }
 
-function updateMap(hospitaisData, dronesData) {
+async function updateMap(urlApi, hospitaisData, dronesData) { 
+    dynamicLayers.clearLayers();
+
     const destino = hospitaisData.find(h => h.crm == $('#hospitaldestino').val());
     const origem = hospitaisData.find(h => h.crm == $('#hospitalorigem').val());
     const drone = dronesData.find(d => d.modelo.id == $('#drone').val());
-    let boundsArray = [];
 
-    if (origemMarker) {
-        map.removeLayer(origemMarker);
-        origemMarker = null;
-    }
-    if (destinoMarker) {
-        map.removeLayer(destinoMarker);
-        destinoMarker = null;
-    }
-    if (droneMarker) {
-        map.removeLayer(droneMarker);
-        droneMarker = null;
-    }
-    if (route1Line) {
-        map.removeLayer(route1Line);
-        route1Line = null;
-    }
-
-    if (origem && origem.lat && origem.lng) {
-        origemMarker = L.marker([origem.lat, origem.lng]).addTo(map)
-            .bindPopup('Hospital de Origem').openPopup();
-    }
-    if (destino && destino.lat && destino.lng) {
-        destinoMarker = L.marker([destino.lat, destino.lng]).addTo(map)
-            .bindPopup('Hospital Destino').openPopup();
-    }
-    if (drone && drone.lat && drone.lng) {
-        droneMarker = L.marker([drone.lat, drone.lng]).addTo(map)
+    let points = []
+    if (hasLatitudeLongitude(drone)){
+        droneMarker = L.marker([drone.lat, drone.lng])
             .bindPopup('Drone').openPopup();
+        dynamicLayers.addLayer(droneMarker);
+        points.push([drone.lat, drone.lng]);
+    }
+    if (hasLatitudeLongitude(origem)){
+        origemMarker = L.marker([origem.lat, origem.lng])
+            .bindPopup('Hospital Origem').openPopup();
+        dynamicLayers.addLayer(origemMarker);
+        points.push([origem.lat, origem.lng]);
+    }
+    if (hasLatitudeLongitude(destino)){
+        destinoMarker = L.marker([destino.lat, destino.lng])
+            .bindPopup('Hospital Destino').openPopup();
+        dynamicLayers.addLayer(destinoMarker);
+        points.push([destino.lat, destino.lng]);
     }
 
-    if (hasLatitudeLongitude(origem) && hasLatitudeLongitude(destino)) {
-        route1Line = L.polyline([
-            [origem.lat, origem.lng],
-            [destino.lat, destino.lng]
-        ], { color: 'blue', weight: 4 }).addTo(map);
-        boundsArray.push([origem.lat, origem.lng], [destino.lat, destino.lng]);
-    }
+    await calcularRota(urlApi, points);
 
-    if (hasLatitudeLongitude(drone) && hasLatitudeLongitude(origem)) {
-        route2Line = L.polyline([
-            [drone.lat, drone.lng],
-            [origem.lat, origem.lng]
-        ], { color: 'orange', weight: 4 }).addTo(map);
-        boundsArray.push([drone.lat, drone.lng], [origem.lat, origem.lng]);
-    }
-
-    if (boundsArray.length > 0) {
-        map.fitBounds(boundsArray, { padding: [50, 50] });
-    }
+    await mapzoom(dynamicLayers);
 }
 
 function hasLatitudeLongitude(entity) {
-    return entity && entity.lat && entity.lng;
+    return entity && entity.lat != null && entity.lng != null;
+}
+
+async function calcularRota(urlApi, points) {
+    if (points.length < 2)
+        return;
+
+    try {
+        const params = new URLSearchParams();
+        points.forEach(p => params.append('point', p));
+        
+        const response = await fetch(`${urlApi}/map_route?${params.toString()}`);
+        if (!response.ok) 
+            throw new Error(`Erro na API: ${response.statusText}`);
+    
+        const map_route = await response.json();
+        if (map_route.paths && map_route.paths.length > 0) {
+            const RouteCoordinates = polyline.decode(map_route.paths[0].points);
+            route1Line = L.polyline(RouteCoordinates, { color: 'blue', weight: 4 });
+            dynamicLayers.addLayer(route1Line);
+        }
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+async function mapzoom(layerGroup) {
+    if (layerGroup && layerGroup.getLayers().length > 0) {
+        const bounds = layerGroup.getBounds();
+        map.fitBounds(bounds, { padding: [50, 50] });
+    }
 }

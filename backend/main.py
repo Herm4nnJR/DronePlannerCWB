@@ -6,6 +6,7 @@ from backend.routes.cargoRoutes import cargos_bp
 from backend.routes.pilotsRoutes import pilots_bp
 from backend.routes.hospitalRoutes import hospitalRoute
 from backend.routes.droneRoutes import drone_bp
+from backend.routes.MapRoutes import map_bp
 
 app = Flask(__name__)
 CORS(app)
@@ -16,6 +17,7 @@ app.register_blueprint(cargos_bp)
 app.register_blueprint(pilots_bp)
 app.register_blueprint(hospitalRoute)
 app.register_blueprint(drone_bp)
+app.register_blueprint(map_bp)
 
 if __name__ == '__main__':
     app.run(debug=True)
