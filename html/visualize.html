@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizar Ocorrências</title>
+    <link rel="stylesheet" href="../style/main.css">
+</head>
+<body>
+    <nav class="horizontal-menu">
+        <ul>
+            <li><a href="index.html" class="logo"><img src="../img/Screenshot_6.png" alt="" height="40px"></a></li>
+            <li><a href="visualize.html">Ocurrence Display</a></li>
+            <li id="userOperationalExclusive"><a href="registerOcurrence.html">Ocurrence Register</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li id="login"><a href='login.html'>Login</a></li>
+        </ul>
+    </nav>
+    <div class="styled-table" >
+        <h1>Ocorrências Registradas</h1>
+        <table id="occurrencesTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Hospital Origem</th>
+                    <th>Hospital Destino</th>
+                    <th>Carga</th>
+                    <th>Piloto</th>
+                    <th>Status</th>
+                    <th>Data</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Dados serão inseridos aqui pelo JavaScript -->
+            </tbody>
+        </table>
+    </div>
+    <script src="../scripts/visualize.js"></script>
+</body>
+</html>
