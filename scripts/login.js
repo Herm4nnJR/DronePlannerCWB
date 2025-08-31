@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             if (data.success) {
                 localStorage.setItem('user', login);
-                window.location.href = 'index.html';
+                window.location.href = 'visualize.html';
             } else {
                 errorMsg.style.display = 'block';
             }
