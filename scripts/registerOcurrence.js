@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(pilotos => {
             $('#piloto').empty().append('<option value="">Selecione</option>');
             pilotos.forEach(opt => {
-                $('#piloto').append(new Option(opt.nome, opt.id));
+                $('#piloto').append(new Option(opt.nome, opt.sarpas));
             });
             $('#piloto').trigger('change');
         });
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
             dronesData = drones;
             $('#drone').empty().append('<option value="">Selecione</option>');
             drones.forEach(opt => {
-                $('#drone').append(new Option(opt.numeroSerie, opt.modelo.id)); 
+                $('#drone').append(new Option(`${opt.modelo.fabricante} ${opt.modelo.modelo}`, opt.numeroSerie)); 
             });
             $('#drone').trigger('change');
         });
@@ -93,32 +93,82 @@ document.addEventListener('DOMContentLoaded', function() {
 
     form.addEventListener('submit', function(e) {
         e.preventDefault();
+        const modal = document.getElementById('detailsModal');
+        modal.style.display = 'block';
+    });
+
+    const closeButton = document.querySelector('.close-button');
+    closeButton.onclick = function() {
+        const modal = document.getElementById('detailsModal');
+        modal.style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('detailsModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    const additionalDetailsForm = document.getElementById('additionalDetailsForm');
+    additionalDetailsForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
         const cargo = $('#cargo').val();
         const hospitaldestino = $('#hospitaldestino').val();
         const hospitalorigem = $('#hospitalorigem').val();
         const piloto = $('#piloto').val();
+        const drone = $('#drone').val();
+        const inicioOperacao = document.getElementById('inicioOperacao').value;
+        const nomeOperacao = document.getElementById('nomeOperacao').value;
+        const perfilOperacao = document.getElementById('perfilOperacao').value;
+        const observacoes = document.getElementById('observacoes').value;
+
+        const data = { cargo, hospitaldestino, hospitalorigem, piloto, drone, inicioOperacao, nomeOperacao, perfilOperacao, observacoes };
 
         fetch(`${urlApi}/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ cargo, hospitaldestino, hospitalorigem, piloto })
+            body: JSON.stringify(data)
         })
         .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                msg.style.display = 'block';
+        .then(result => {
+            if (result.success) {
+                document.getElementById('detailsModal').style.display = 'none';
+                
                 form.reset();
+                additionalDetailsForm.reset();
+                $('#cargo, #hospitaldestino, #hospitalorigem, #piloto, #drone').val(null).trigger('change');
+
+                const successModal = document.getElementById('successModal');
+                successModal.style.display = 'block';
             } else {
-                msg.style.display = 'none';
-                alert('Erro ao registrar ocorrência.');
+                console.error("Erro ao registrar:", result.error);
             }
         })
-        .catch(() => {
-            msg.style.display = 'none';
-            alert('Erro ao conectar com o servidor.');
+        .catch(error => {
+            console.error("Erro ao enviar dados:", error);
         });
+
+    });
+
+    const successModal = document.getElementById('successModal');
+    const successCloseButton = document.querySelector('.success-close-button');
+    const closeSuccessModalBtn = document.getElementById('closeSuccessModalBtn');
+
+    const closeSuccessModal = () => {
+        successModal.style.display = 'none';
+    };
+
+    successCloseButton.onclick = closeSuccessModal;
+    closeSuccessModalBtn.onclick = closeSuccessModal;
+
+    window.addEventListener('click', function(event) {
+        if (event.target == successModal) {
+            closeSuccessModal();
+        }
     });
 
     function checkShowEtapa2Fields() {
