@@ -49,8 +49,8 @@ async function updateMap(urlApi, hospitaisData, dronesData) {
         dynamicLayers.addLayer(destinoMarker);
     }
 
-    const parcial1 = await calcularRota(urlApi, drone, origem, 'blue');
-    const parcial2 = await calcularRota(urlApi, origem, destino, 'red');
+    const parcial1 = await calcularRota(urlApi, drone, origem, drone, 'blue');
+    const parcial2 = await calcularRota(urlApi, origem, destino, drone, 'red');
     const total = calcularTotal(parcial1, parcial2);
 
     setResumoRota({
@@ -69,7 +69,7 @@ function hasLatitudeLongitude(entity) {
     return entity && entity.lat != null && entity.lng != null;
 }
 
-async function calcularRota(urlApi, origem, destino, cor) {
+async function calcularRota(urlApi, origem, destino, droneUtilizado, cor) {
     if (!origem || !destino)
         return;
 
@@ -77,7 +77,9 @@ async function calcularRota(urlApi, origem, destino, cor) {
         const params = new URLSearchParams();
         params.append('point', [origem.lat, origem.lng]);
         params.append('point', [destino.lat, destino.lng]);
-
+        if (droneUtilizado)
+            params.append('droneUtilizado', droneUtilizado.id);
+        
         const response = await fetch(`${urlApi}/map_route?${params.toString()}`);
         if (!response.ok) 
             throw new Error(`Erro na API: ${response.statusText}`);
