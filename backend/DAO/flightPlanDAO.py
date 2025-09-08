@@ -24,7 +24,7 @@ class FlightPlanDAO:
             ))
 
             plano_voo_id = cursor.fetchone()[0]
-            
+
             cursor.execute("""
                 INSERT INTO tcc_hermann_plano_voo_piloto (id_plano_voo, cod_sarpas)
                 VALUES (%s, %s)
@@ -39,6 +39,18 @@ class FlightPlanDAO:
                 INSERT INTO tcc_hermann_caixa_carga (id_caixa_transporte, id_carga, quantidade)
                 VALUES (%s, %s, %s)
             """, (1, flight_plan.cargo_id, 1))
+
+            # Salvar rotas se existirem
+            if flight_plan.rota1:
+                cursor.execute("""
+                    INSERT INTO tcc_hermann_plano_voo_rota (id_plano_voo, rota, ordem)
+                    VALUES (%s, ST_GeomFromText(%s, 4326), %s)
+                """, (plano_voo_id, flight_plan.rota1, 1))
+            if flight_plan.rota2:
+                cursor.execute("""
+                    INSERT INTO tcc_hermann_plano_voo_rota (id_plano_voo, rota, ordem)
+                    VALUES (%s, ST_GeomFromText(%s, 4326), %s)
+                """, (plano_voo_id, flight_plan.rota2, 2))
 
             self.connection.commit()
             print(f"Plano de voo {plano_voo_id} criado com sucesso.")

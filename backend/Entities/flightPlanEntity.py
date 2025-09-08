@@ -2,7 +2,7 @@ from datetime import datetime
 from backend.utils.enums import StatusPlanoVoo
 
 class FlightPlan:
-    def __init__(self, id, cargo_id, hospital_destino_crm, hospital_origem_crm, piloto_sarpas, drone_id, inicio_operacao, nome_operacao, perfil_operacao, observacoes, status=StatusPlanoVoo.PLANEJADO.value):
+    def __init__(self, id, cargo_id, hospital_destino_crm, hospital_origem_crm, piloto_sarpas, drone_id, inicio_operacao, nome_operacao, perfil_operacao, observacoes, rota1=None, rota2=None, status=StatusPlanoVoo.PLANEJADO.value):
         self.id = id
         self.cargo_id = cargo_id
         self.hospital_destino_crm = hospital_destino_crm
@@ -13,7 +13,9 @@ class FlightPlan:
         self.nome_operacao = nome_operacao
         self.perfil_operacao = perfil_operacao
         self.observacoes = observacoes
-        self.status = status 
+        self.rota1 = rota1
+        self.rota2 = rota2
+        self.status = status
 
     @staticmethod
     def from_dict(data):
@@ -25,7 +27,7 @@ class FlightPlan:
                 inicio_operacao_dt = None
 
         return FlightPlan(
-            id=None, 
+            id=None,
             cargo_id=data.get('cargo'),
             hospital_destino_crm=data.get('hospitaldestino'),
             hospital_origem_crm=data.get('hospitalorigem'),
@@ -34,7 +36,9 @@ class FlightPlan:
             inicio_operacao=inicio_operacao_dt,
             nome_operacao=data.get('nomeOperacao'),
             perfil_operacao=data.get('perfilOperacao'),
-            observacoes=data.get('observacoes')
+            observacoes=data.get('observacoes'),
+            rota1=data.get('rota1'),
+            rota2=data.get('rota2')
         )
 
     def to_dict(self):
@@ -49,5 +53,7 @@ class FlightPlan:
             'nome_operacao': self.nome_operacao,
             'perfil_operacao': self.perfil_operacao,
             'observacoes': self.observacoes,
+            'rota1': self.rota1,
+            'rota2': self.rota2,
             'status': self.status
         }
