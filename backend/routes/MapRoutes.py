@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 import requests
-from backend.utils.drone_utils import CalculaVelocidade, CalculaTempo
+from backend.utils.drone_utils import CalculaTempo
 
 map_bp = Blueprint('map_bp', __name__)
 
