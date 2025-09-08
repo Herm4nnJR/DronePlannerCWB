@@ -53,6 +53,7 @@
         </div>
         <div id="map" style="flex: 2; min-width: 320px; height: 400px; border-radius: 8px; box-shadow: 0 2px 8px #0001;"></div>
     </div>
+
     <!-- The Modal -->
     <div id="detailsModal" class="modal">
         <div class="modal-content">
@@ -78,6 +79,22 @@
                     <label for="observacoes">Observações:</label>
                     <textarea id="observacoes" name="observacoes" rows="4" class="form-control" placeholder="Alguma observação importante sobre a operação..."></textarea>
                 </div>
+                <h3>Resumo da Ocorrência</h3>
+                <div class="summary-fields">
+                    <p><strong>Hospital de Origem:</strong> <span id="summaryHospitalOrigem"></span><br>
+                    <small id="summaryHospitalOrigemEndereco"></small></p>
+                    <p><strong>Hospital de Destino:</strong> <span id="summaryHospitalDestino"></span><br>
+                    <small id="summaryHospitalDestinoEndereco"></small></p>
+                    <p><strong>Drone Utilizado:</strong> <span id="summaryDrone"></span></p>
+                    <p><strong>Carga e Quantidade:</strong> <span id="summaryCarga"></span></p>
+                    <p><strong>Distância Total:</strong> <span id="summaryDistanciaTotal"></span></p>
+                    <p><strong>Tempo Total de Deslocamento:</strong> <span id="summaryTempoTotal"></span></p>
+                    <p><strong>Distância Parcial 1:</strong> <span id="summaryDistanciaParcial1"></span></p>
+                    <p><strong>Tempo Parcial 1:</strong> <span id="summaryTempoParcial1"></span></p>
+                    <p><strong>Distância Parcial 2:</strong> <span id="summaryDistanciaParcial2"></span></p>
+                    <p><strong>Tempo Parcial 2:</strong> <span id="summaryTempoParcial2"></span></p>
+                </div>
+
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary">Confirmar e Registrar</button>
                 </div>

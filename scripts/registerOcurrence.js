@@ -94,6 +94,29 @@ document.addEventListener('DOMContentLoaded', function() {
     form.addEventListener('submit', function(e) {
         e.preventDefault();
         const modal = document.getElementById('detailsModal');
+        
+        const hospitalOrigemCrm = $('#hospitalorigem').val();
+        const hospitalDestinoCrm = $('#hospitaldestino').val();
+        const droneNumeroSerie = $('#drone').val();
+
+        const hospitalOrigem = hospitaisData.find(h => h.crm == hospitalOrigemCrm) || {};
+        const hospitalDestino = hospitaisData.find(h => h.crm == hospitalDestinoCrm) || {};
+        const drone = dronesData.find(d => d.numeroSerie == droneNumeroSerie) || {};
+        const cargaText = $('#cargo option:selected').text();
+
+        $('#summaryHospitalOrigem').text(hospitalOrigem.nome || '-');
+        $('#summaryHospitalOrigemEndereco').text(hospitalOrigem.endereco || '');
+        $('#summaryHospitalDestino').text(hospitalDestino.nome || '-');
+        $('#summaryHospitalDestinoEndereco').text(hospitalDestino.endereco || '');
+        $('#summaryDrone').text(drone.modelo ? `${drone.modelo.fabricante} ${drone.modelo.modelo}` : '-');
+        $('#summaryCarga').text(cargaText);
+        $('#summaryDistanciaTotal').text('-');
+        $('#summaryTempoTotal').text('-');
+        $('#summaryDistanciaParcial1').text('-');
+        $('#summaryTempoParcial1').text('-');
+        $('#summaryDistanciaParcial2').text('-');
+        $('#summaryTempoParcial2').text('-');
+        
         modal.style.display = 'block';
     });
 
