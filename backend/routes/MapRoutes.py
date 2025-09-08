@@ -26,11 +26,12 @@ def get_route():
     try:
         response = requests.get(url)
         response.raise_for_status()  
-        route_data = response.json()
+        response_data = response.json()
 
-        # Aqui você pode processar os dados, salvar no banco, etc.
-        # Por enquanto, vamos apenas retornar para o frontend.
-        return jsonify(route_data)
+        route = response_data.get('paths', [{}])[0].get('points', [])
+        distance = response_data.get('paths', [{}])[0].get('distance', [])
+
+        return jsonify({"route": route, "distancia": distance})
 
     except requests.exceptions.RequestException as e:
         return jsonify({"error": f"Erro ao contatar a API de rotas: {e}"}), 500

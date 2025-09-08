@@ -110,12 +110,14 @@ document.addEventListener('DOMContentLoaded', function() {
         $('#summaryHospitalDestinoEndereco').text(hospitalDestino.endereco || '');
         $('#summaryDrone').text(drone.modelo ? `${drone.modelo.fabricante} ${drone.modelo.modelo}` : '-');
         $('#summaryCarga').text(cargaText);
-        $('#summaryDistanciaTotal').text('-');
-        $('#summaryTempoTotal').text('-');
-        $('#summaryDistanciaParcial1').text('-');
-        $('#summaryTempoParcial1').text('-');
-        $('#summaryDistanciaParcial2').text('-');
-        $('#summaryTempoParcial2').text('-');
+        const resumoRota = window.getResumoRota ? window.getResumoRota() : {};
+
+        $('#summaryDistanciaTotal').text(resumoRota.distanciaTotal ?? '-');
+        $('#summaryTempoTotal').text(resumoRota.tempoTotal ?? '-');
+        $('#summaryDistanciaParcial1').text(resumoRota.distanciaParcial1 ?? '-');
+        $('#summaryTempoParcial1').text(resumoRota.tempoParcial1 ?? '-');
+        $('#summaryDistanciaParcial2').text(resumoRota.distanciaParcial2 ?? '-');
+        $('#summaryTempoParcial2').text(resumoRota.tempoParcial2 ?? '-');
         
         modal.style.display = 'block';
     });
