@@ -54,6 +54,8 @@ async function updateMap(urlApi, hospitaisData, dronesData) {
     const total = await calcularTotal(parcial1, parcial2);
 
     setResumoRota({
+        rota1: parcial1?.cordenadasRota,
+        rota2: parcial2?.cordenadasRota,
         totalDist: total?.distancia,
         totalTime: total?.tempo,
         totalTime_hora_min_seg: total?.tempo_hora_min_seg,
@@ -95,7 +97,8 @@ async function calcularRota(urlApi, origem, destino, droneUtilizado, cor) {
         }
         return {
             distancia: map_route.distancia,
-            tempo: map_route.tempo
+            tempo: map_route.tempo,
+            cordenadasRota: RouteCoordinates
         };
     } catch (error) {
         console.error(error);
@@ -134,7 +137,9 @@ async function calcularTotal(parcial1, parcial2) {
     }
 }
 
-function setResumoRota({ totalDist, totalTime, TotalTime_hora_min_seg, parcial1Dist, parcial1Time, parcial1Time_hora_min_seg, parcial2Dist, parcial2Time, parcial2Time_hora_min_seg }) {
+function setResumoRota({ cordenadas1, cordenadas2, totalDist, totalTime, TotalTime_hora_min_seg, parcial1Dist, parcial1Time, parcial1Time_hora_min_seg, parcial2Dist, parcial2Time, parcial2Time_hora_min_seg }) {
+    cordenadas1 = cordenadas1;
+    cordenadas2 = cordenadas2;
     distanciaTotal = totalDist;
     tempoTotal = totalTime;
     tempoTotal_hora_min_seg = TotalTime_hora_min_seg;
@@ -149,6 +154,8 @@ function setResumoRota({ totalDist, totalTime, TotalTime_hora_min_seg, parcial1D
 
 function getResumoRota() {
     return {
+        cordenadas1,
+        cordenadas2,
         distanciaTotal,
         tempoTotal,
         tempoTotal_hora_min_seg,

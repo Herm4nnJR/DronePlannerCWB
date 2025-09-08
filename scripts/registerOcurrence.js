@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const etapa2FieldsDiv = document.getElementById('etapa2Fields');
     const etapa3FieldsDiv = document.getElementById('etapa3Fields');
     const urlApi = 'http://localhost:5000/api';
+    let resumoRota;
 
     let hospitaisData = [];
     let dronesData = [];
@@ -110,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function() {
         $('#summaryHospitalDestinoEndereco').text(hospitalDestino.endereco || '');
         $('#summaryDrone').text(drone.modelo ? `${drone.modelo.fabricante} ${drone.modelo.modelo}` : '-');
         $('#summaryCarga').text(cargaText);
-        const resumoRota = window.getResumoRota ? window.getResumoRota() : {};
+        resumoRota = window.getResumoRota ? window.getResumoRota() : {};
 
         $('#summaryDistanciaTotal').text(resumoRota.distanciaTotal ?? '-');
         $('#summaryTempoTotal').text(resumoRota.tempoTotal_hora_min_seg ?? '-');
@@ -149,7 +150,18 @@ document.addEventListener('DOMContentLoaded', function() {
         const perfilOperacao = document.getElementById('perfilOperacao').value;
         const observacoes = document.getElementById('observacoes').value;
 
-        const data = { cargo, hospitaldestino, hospitalorigem, piloto, drone, inicioOperacao, nomeOperacao, perfilOperacao, observacoes };
+        const data = { cargo,
+            hospitaldestino,
+            hospitalorigem,
+            piloto,
+            drone,
+            inicioOperacao,
+            nomeOperacao,
+            perfilOperacao,
+            observacoes,
+            rota1 : resumoRota.cordenadas1,
+            rota2 : resumoRota.cordenadas2
+        };
 
         fetch(`${urlApi}/register`, {
             method: 'POST',
