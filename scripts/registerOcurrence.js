@@ -113,12 +113,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const resumoRota = window.getResumoRota ? window.getResumoRota() : {};
 
         $('#summaryDistanciaTotal').text(resumoRota.distanciaTotal ?? '-');
-        $('#summaryTempoTotal').text(resumoRota.tempoTotal ?? '-');
+        $('#summaryTempoTotal').text(resumoRota.tempoTotal_hora_min_seg ?? '-');
         $('#summaryDistanciaParcial1').text(resumoRota.distanciaParcial1 ?? '-');
-        $('#summaryTempoParcial1').text(resumoRota.tempoParcial1 ?? '-');
+        $('#summaryTempoParcial1').text(resumoRota.tempoParcial1_hora_min_seg ?? '-');
         $('#summaryDistanciaParcial2').text(resumoRota.distanciaParcial2 ?? '-');
-        $('#summaryTempoParcial2').text(resumoRota.tempoParcial2 ?? '-');
-        
+        $('#summaryTempoParcial2').text(resumoRota.tempoParcial2_hora_min_seg ?? '-');
+
         modal.style.display = 'block';
     });
 

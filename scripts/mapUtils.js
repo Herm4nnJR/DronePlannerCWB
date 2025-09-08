@@ -31,7 +31,7 @@ async function updateMap(urlApi, hospitaisData, dronesData) {
 
     const destino = hospitaisData.find(h => h.crm == $('#hospitaldestino').val());
     const origem = hospitaisData.find(h => h.crm == $('#hospitalorigem').val());
-    const drone = dronesData.find(d => d.modelo.id == $('#drone').val());
+    const drone = dronesData.find(d => d.numeroSerie == $('#drone').val());
 
     if (hasLatitudeLongitude(drone)){
         droneMarker = L.marker([drone.lat, drone.lng])
@@ -51,15 +51,18 @@ async function updateMap(urlApi, hospitaisData, dronesData) {
 
     const parcial1 = await calcularRota(urlApi, drone, origem, drone, 'blue');
     const parcial2 = await calcularRota(urlApi, origem, destino, drone, 'red');
-    const total = calcularTotal(parcial1, parcial2);
+    const total = await calcularTotal(parcial1, parcial2);
 
     setResumoRota({
-        totalDist: total.distancia,
-        totalTime: total.tempo,
+        totalDist: total?.distancia,
+        totalTime: total?.tempo,
+        totalTime_hora_min_seg: total?.tempo_hora_min_seg,
         parcial1Dist: parcial1?.distancia,
         parcial1Time: parcial1?.tempo,
+        parcial1Time_hora_min_seg: parcial1?.tempo_hora_min_seg,
         parcial2Dist: parcial2?.distancia,
-        parcial2Time: parcial2?.tempo
+        parcial2Time: parcial2?.tempo,
+        parcial2Time_hora_min_seg: parcial2?.tempo_hora_min_seg
     });
 
     await mapzoom(dynamicLayers);
@@ -78,8 +81,8 @@ async function calcularRota(urlApi, origem, destino, droneUtilizado, cor) {
         params.append('point', [origem.lat, origem.lng]);
         params.append('point', [destino.lat, destino.lng]);
         if (droneUtilizado)
-            params.append('droneUtilizado', droneUtilizado.id);
-        
+            params.append('droneUtilizado', droneUtilizado.modelo.id);
+
         const response = await fetch(`${urlApi}/map_route?${params.toString()}`);
         if (!response.ok) 
             throw new Error(`Erro na API: ${response.statusText}`);
@@ -106,23 +109,41 @@ async function mapzoom(layerGroup) {
     }
 }
 
-function calcularTotal(parcial1, parcial2) {
-    const totalDist = (Number(parcial1?.distancia) || 0) + (Number(parcial2?.distancia) || 0);
-    const totalTime = (Number(parcial1?.tempo) || 0) + (Number(parcial2?.tempo) || 0);
+async function calcularTotal(parcial1, parcial2) {
+    if (!parcial1 && !parcial2)
+        return;
+    try {
+        const params = new URLSearchParams();
+        params.append('tempo1', parcial1?.tempo);
+        params.append('tempo2', parcial2?.tempo);
+        params.append('distancia1', parcial1?.distancia);
+        params.append('distancia2', parcial2?.distancia);
 
-    return {
-        distancia: totalDist,
-        tempo: totalTime
-    };
+        const response = await fetch(`${urlApi}/tempo_distancia_total/tempos?${params.toString()}`);
+        if (!response.ok) 
+            throw new Error(`Erro na API: ${response.statusText}`);
+
+        total = await response.json();
+        return{
+            distancia: total.distancia,
+            tempo: total.tempo,
+            tempo_hora_min_seg: total.tempo_hora_min_seg
+        }
+    } catch (error) {
+        console.error(error);
+    }
 }
 
-function setResumoRota({ totalDist, totalTime, parcial1Dist, parcial1Time, parcial2Dist, parcial2Time }) {
+function setResumoRota({ totalDist, totalTime, TotalTime_hora_min_seg, parcial1Dist, parcial1Time, parcial1Time_hora_min_seg, parcial2Dist, parcial2Time, parcial2Time_hora_min_seg }) {
     distanciaTotal = totalDist;
     tempoTotal = totalTime;
+    tempoTotal_hora_min_seg = TotalTime_hora_min_seg;
     distanciaParcial1 = parcial1Dist;
     tempoParcial1 = parcial1Time;
+    tempoParcial1_hora_min_seg = parcial1Time_hora_min_seg;
     distanciaParcial2 = parcial2Dist;
     tempoParcial2 = parcial2Time;
+    tempoParcial2_hora_min_seg = parcial2Time_hora_min_seg;
 }
 
 
@@ -130,10 +151,13 @@ function getResumoRota() {
     return {
         distanciaTotal,
         tempoTotal,
+        tempoTotal_hora_min_seg,
         distanciaParcial1,
         tempoParcial1,
+        tempoParcial1_hora_min_seg,
         distanciaParcial2,
-        tempoParcial2
+        tempoParcial2,
+        tempoParcial2_hora_min_seg
     };
 }
 

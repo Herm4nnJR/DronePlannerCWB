@@ -22,9 +22,9 @@ class DroneDAO:
                         drones.append(Drone(numero_serie, modelos[id_modelo], ativo, lat, lng))
         return drones
 
-    def get_velocidade_by_drone_id(self, drone_id):
+    def get_velocidade_by_modelo_id(self, modelo_drone_id):
         with get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute("SELECT velocidade_horizontal_max_kmh * 0.75 FROM tcc_hermann_modelo_drone WHERE id = %s", (drone_id,))
+                cur.execute("SELECT velocidade_horizontal_max_kmh * 0.75 FROM tcc_hermann_modelo_drone WHERE id = %s", (modelo_drone_id,))
                 resultado = cur.fetchone()
                 return resultado[0] if resultado else None
